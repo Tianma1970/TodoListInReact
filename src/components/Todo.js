@@ -1,10 +1,11 @@
 import React from "react"
 
 export default function Todo(props) {
+  console.log(props)
   return (
     <li className="todo stack-small">
       <div className="c-cb">
-        <input id="todo-0" type="checkbox" defaultChecked={props.completed} />
+        <input id={props.id} type="checkbox" defaultChecked={props.completed} />
         <label className="todo-label" htmlFor={props.id}>
           {props.name}
         </label>
