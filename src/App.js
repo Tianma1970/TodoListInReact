@@ -11,7 +11,19 @@ function App(props) {
     const newTask = { id: `todo-${nanoid()}`, name, completed: false }
     setTasks([...tasks, newTask])
   }
-  const taskList = tasks.map(task => <Todo id={task.id} name={task.name} completed={task.completed} key={task.id} />)
+  function toggleTaskCompleted(id) {
+    const updatedTasks = tasks.map(task => {
+      //if this task has the same id like the edited task
+      if (id === task.id) {
+        //use object spread to make a new object
+        //whose 'completed' prop has been inverted
+        return { ...task, completed: !task.completed }
+      }
+      return task
+    })
+    setTasks(updatedTasks)
+  }
+  const taskList = tasks.map(task => <Todo id={task.id} name={task.name} completed={task.completed} key={task.id} toggleTaskCompleted={toggleTaskCompleted} />)
   const tasksNoun = taskList.length !== 1 ? "tasks" : "task"
   const headingText = `${taskList.length} ${tasksNoun} tasks remaining`
   return (
