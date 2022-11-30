@@ -1,7 +1,18 @@
-import React, { useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
+
+function usePrevious(value) {
+  const ref = useRef()
+  useEffect(() => {
+    ref.current = value
+  })
+  return ref.current
+}
 
 export default function Todo(props) {
   const [newName, setNewName] = useState("")
+
+  const editFieldRef = useRef(null)
+  const editButtonRef = useRef(null)
 
   function handleChange(e) {
     setNewName(e.target.value)
@@ -21,7 +32,7 @@ export default function Todo(props) {
         <label className="todo-label" htmlFor={props.id}>
           New name for {props.name}
         </label>
-        <input id={props.id} className="todo-text" type="text" value={newName} onChange={handleChange} />
+        <input id={props.id} className="todo-text" type="text" value={newName} onChange={handleChange} ref={editFieldRef} />
       </div>
       <div className="btn-group">
         <button type="button" className="btn todo-cancel" onClick={() => setEditing(false)}>
@@ -44,7 +55,7 @@ export default function Todo(props) {
         </label>
       </div>
       <div className="btn-group">
-        <button type="button" className="btn" onClick={() => setEditing(true)}>
+        <button type="button" className="btn" onClick={() => setEditing(true)} ref={editButtonRef}>
           Edit <span className="visually-hidden">{props.name}</span>
         </button>
         <button type="button" className="btn btn__danger" onClick={() => props.deleteTask(props.id)}>
@@ -53,6 +64,15 @@ export default function Todo(props) {
       </div>
     </div>
   )
+  const wasEditing = usePrevious(isEditing)
+  useEffect(() => {
+    if (!wasEditing && isEditing) {
+      editFieldRef.current.focus()
+    }
+    if (wasEditing && !isEditing) {
+      editButtonRef.current.focus()
+    }
+  }, [wasEditing, isEditing])
 
   return <li className="todo">{isEditing ? editingTemplate : viewTemplate}</li>
 }
